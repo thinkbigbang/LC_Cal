@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+  <!--웹 접속 시 효과음 재생-->
+  <audio id="enter" src="audio/enter.mp3" preload="auto"></audio>
+  <audio id="inputsound" preload="auto"></audio>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <title>Lethal Company Calculator</title> <!--웹 타이틀 표시내용-->
+
+    <style>
+
+    /*전체 디자인*/
+
+        /*웹 전체 폰트 배치*/
+
+        @font-face /*영어*/
+        { 
+          font-family: '3270';
+          src: url('fonts/3270-Regular.ttf') format('truetype'); /*경로체크!!*/
+        }
+        
+        @font-face /*한글*/
+        {
+          font-family: 'Orbit';
+          src: url('fonts/Orbit-Regular.ttf') format('truetype'); 
+        }
+
+        body {
+
+          /*웹 폰트 속성, 크기 자동 조절*/
+          font-family: '3270', sans-serif; 
+
+          .title {
+            font-size: 5vw; /* 뷰포트 너비의 5% */
+          }
+
+          label {
+            font-size: 3vw; /* 뷰포트 너비의 3% */
+          }
+          
+          /*배경이미지*/
+          margin: 0;
+            height: 0vh;
+            background: url('images/bg_width.png') no-repeat center center fixed;
+            background-size: cover; /* 이미지가 화면에 맞게 조정 */
+
+          /*전체 글씨 색깔*/
+          color: #40FE01;
+        }
+
+          /*대제목 디자인*/
+
+          .title {
+            text-align: center;
+            font-size: 5em; 
+            color: #40FE01; 
+            margin-top: 80px; 
+          }
+
+          /*사용자 입력칸 디자인*/
+
+           #input1, #input2 { /*할당량, 필요한 돈 칸 디자인*/
+            position: relative;
+            background-color: transparent;
+            border: none;
+            font-size: x-large;
+            color: #40FE01;
+           }
+
+           input.fixed-font {
+            font-family: '3270', sans-serif;
+           }
+
+           #result { /*결과값 출력 칸 디자인*/
+           
+            position: relative;
+            background-color: transparent;
+            border: none;
+            font-size: 4em;
+            color: red;
+           }
+
+           label { /*칸 소제목 */
+            font-size: 3em;
+          }
+
+          #calculator {
+            position: relative; /* 하위 요소 절대 위치값 설정 */
+           }
+    </style>
+</head>
+
+<!--사용자 텍스트 입력칸-->
+<body>
+    <div class="container mt-5">
+        <h1 class="title"> Challenge Calculator</h1> <!--대제목-->
+
+        <form id="calcForm"> <!--할당량 입력칸-->
+            <div class="form-group">
+                <label for="input1">Quota</label>
+                <input type="number" class="form-control" id="input1" placeholder="____$" required>
+            </div>
+
+            <div class="form-group"> <!--필요한 돈 입력칸-->
+                <label for="input2">Amount of Money Required</label>
+                <input type="number" class="form-control" id="input2" placeholder="____$" required>
+            </div>
+
+            <div class="form-group"> <!--결과값 출력칸-->
+                <label for="result">Amount to Sell</label> 
+                <input type="text" class="form-control" id="result" value="____$" readonly>
+            </div>
+        </form>
+    </div>
+  
+    <script src="scripts/userLang.js"></script>
+    <script src="scripts/script.js"></script>
+
+    <script>
+      //사용자 입력칸 폰트 고정
+      function updateFontClass(input) {
+        if (input.value) {
+          input.classList.add('fixed-font'); // 입력이 있을 때 클래스 추가
+        } else {
+          input.classList.remove('fixed-font'); // 입력이 없으면 클래스 제거
+        }
+      }
+          input1.addEventListener('input', () => {
+            updateFontClass(input1);
+            calculate();
+      });
+          input2.addEventListener('input', () => {
+            updateFontClass(input2);
+            calculate();
+      });
+          result.addEventListener('input', () => {
+            updateFontClass(result);
+      });
+
+      //계산 전 변수 선언, 모든 컨텐츠 미리 로드
+      document.addEventListener('DOMContentLoaded', () => {
+        const input1 = document.getElementById('input1');
+        const input2 = document.getElementById('input2');
+        const result = document.getElementById('result');
+        const inputSound = document.getElementById('inputsound');
+
+      //입력한 숫자 계산
+        function calculate() {
+            const num1 = parseFloat(input1.value.replace(/\$/g, '')) || null; // 할당량
+            const num2 = parseFloat(input2.value.replace(/\$/g, '')) || null; // 필요한 돈
+
+            const sum = Math.round(num1 + (5 * num2 + num1 + 75) / 6); // 계산식, A=⌈(5N+Q+75)/6⌉ 으로 구현하기, A: 팔아야 하는 양, N: 필요한 돈, Q: 할당량
+            if (num1 === null || num2 === null) { 
+              result.value = '____$';
+              return;
+            }
+            result.value = `${sum}$`; // 결과값
+        }
+
+    // 사용자 입력값 리스너, 모두 숫자 5자리까지 제한
+      input1.addEventListener
+      (
+        'input', () => 
+        {
+          if (input1.value.length > 5) 
+            {
+              input1.value = input1.value.slice(0, 5);
+            }
+        }
+      )    
+
+      input2.addEventListener
+      (
+        'input', () => 
+        {
+          if (input2.value.length > 5) 
+            {
+              input2.value = input1.value.slice(0, 5);
+            }
+        }
+      )
+
+    //결과칸 기본값
+    document.addEventListener
+    (
+      'DOMContentLoaded', () => 
+        {
+          result.value = '____$';
+        }
+    );
+
+    //키 입력 사운드 배치
+        const soundFiles = 
+        [
+          'audio/typing_01.mp3',
+          'audio/typing_02.mp3',
+          'audio/typing_03.mp3',
+          'audio/typing_04.mp3',
+          'audio/typing_05.mp3',
+          'audio/typing_06.mp3',
+          'audio/typing_07.mp3'
+        ];
+
+       //키 입력 사운드 무작위 재생
+
+       function playRandomSound() 
+       {
+          const randomIndex = Math.floor(Math.random() * soundFiles.length); // 랜덤 인덱스 생성
+                inputSound.src = soundFiles[randomIndex]; // 랜덤 소리 파일 선택
+                inputSound.currentTime = 0; // 소리를 처음부터 재생
+                inputSound.play().catch(error => {
+                console.log('소리 재생 오류:', error);
+            }
+          )   
+       }
+
+        input1.addEventListener('input', () => {
+            calculate();
+            playRandomSound(); // 랜덤 소리 재생
+        });
+
+        input2.addEventListener('input', () => {
+            calculate();
+            playRandomSound(); // 랜덤 소리 재생
+        });
+      });
+
+    </script>
+
+    <!--접속 시 효과음 재생-->
+    <script>
+    window.onload = function() {
+        const audio = document.getElementById('enter');
+        audio.play().catch(error => {
+            console.log('오디오 재생 오류:', error);
+        });
+    };
+    </script>
+  </body>
+</html>
